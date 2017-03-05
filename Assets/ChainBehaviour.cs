@@ -44,6 +44,18 @@ public class Chain : IChain
         });
     }
 
+    public static Chain Create(Func<Chain> func)
+    {
+        return Create(callback =>
+        {
+            var chain = func.Invoke();
+            if (chain != null)
+                (chain as IChain).Run(callback);
+            else
+                callback.Invoke();
+        });
+    }
+
     public static Chain Create(Action<Action> actionWithCallback)
     {
         return new Chain(actionWithCallback);
